@@ -46,13 +46,15 @@ def decrypt(pwd:str, file:bytes):
     #3. Voy a revisar el token
     #4. voy a volver un dict con la info desencriptada y la meta
     #3 y 4 se hacen en automatico gracias a la libreria
-    
-    helper = AESGCM(key)
-    plaintext = helper.decrypt(
-        nonce,
-        file,
-        meta_bytes
-    )
+    try:
+        helper = AESGCM(key)
+        plaintext = helper.decrypt(
+            nonce,
+            file,
+            meta_bytes
+        )
+    except InvalidTag:
+        raise InvalidTag("The metadata, archive or password has been modified. Tag mismatch.")
     return  {
             "plaintext": plaintext,
             "metadata": meta
