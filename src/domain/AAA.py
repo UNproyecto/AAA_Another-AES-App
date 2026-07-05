@@ -17,7 +17,7 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM #AES GCM implemen
 from cryptography.exceptions import InvalidTag #Para error de tag Invalido
 from json import dumps, loads #Metadata
 
-def encrypt(pwd:str, file:bytes, meta:dict):
+def encrypt(pwd:str, file:bytes, meta:dict) -> bytes:
     salt, key = derive_pwd(pwd).values()
 
     #Nonce es un numero aleatorio usado 
@@ -34,7 +34,7 @@ def encrypt(pwd:str, file:bytes, meta:dict):
 
     return encrypted_file
 
-def decrypt(pwd:str, file:bytes):
+def decrypt(pwd:str, file:bytes) -> dict:
     #Hay varias formas de procesarlo
     #1. Voy a quitar la metadata
     #Meta es el diccionario con los datos de la metadata y metadata es toda la cadena de bytes para recalcular el tag
@@ -60,7 +60,7 @@ def decrypt(pwd:str, file:bytes):
             "metadata": meta
             }
 
-def gen_metadata(meta:dict, salt:bytes, nonce:bytes):
+def gen_metadata(meta:dict, salt:bytes, nonce:bytes) -> bytes:
     magic = b"%AAA" #Todos los formatos de archivo lo llevan para indicar el tipo (4-bytes)
     version =  (1).to_bytes(1, "big") #Version del formato (1-byte)
 
@@ -108,7 +108,7 @@ def remove_metadata(file:bytes) -> dict:
                     }
             }
 
-def derive_pwd(pwd:str, salt:bytes=None):
+def derive_pwd(pwd:str, salt:bytes=None) -> dict:
 
     salt = token_bytes(16) if salt is None else salt
 
