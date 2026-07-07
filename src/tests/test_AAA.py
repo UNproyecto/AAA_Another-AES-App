@@ -103,7 +103,7 @@ def test_decrypt_original_msg():
     cypher = AAA.encrypt(pwd, archivo)
     decypher = AAA.decrypt(pwd, cypher)
     
-    plain = decypher.mensaje.decode("utf-8")
+    plain = decypher.contenido.decode("utf-8")
 
     assert msj == plain
 
