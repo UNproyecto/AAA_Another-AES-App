@@ -21,7 +21,7 @@ from .models import Archivo
 def encrypt(pwd:str, archivo:Archivo) -> bytes:
     salt, key = derive_pwd(pwd).values()
 
-    file = archivo.mensaje
+    file = archivo.contenido
     meta = archivo.metadata
     
 
