@@ -1,8 +1,8 @@
 '''
 AAA.py
-Es un modulo que contiene toda la logica de la aplicacion.
-Se encarga del encriptado, desencriptado y extension de clave.
-Tambien se encarga de todas las tareas adicionales que puedan ser necesarias.
+Es un modulo que contiene toda la lógica de la aplicación.
+Se encarga del encriptado, desencriptado y extensión de clave.
+También se encarga de todas las tareas adicionales que puedan ser necesarias.
 '''
 
 from argon2.low_level import hash_secret_raw, Type #password derivation
@@ -16,9 +16,14 @@ from secrets import token_bytes #Salt libraries
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM #AES GCM implementation
 from cryptography.exceptions import InvalidTag #Para error de tag Invalido
 from json import dumps, loads #Metadata
+from .models import Archivo
 
-def encrypt(pwd:str, file:bytes, meta:dict):
+def encrypt(pwd:str, archivo:Archivo) -> bytes:
     salt, key = derive_pwd(pwd).values()
+
+    file = archivo.mensaje
+    meta = archivo.metadata
+    
 
     #Nonce es un numero aleatorio usado 
     #para que un mismo mensaje dada una misma clave no de dos veces el mismo cifrado
@@ -34,7 +39,7 @@ def encrypt(pwd:str, file:bytes, meta:dict):
 
     return encrypted_file
 
-def decrypt(pwd:str, file:bytes):
+def decrypt(pwd:str, file:bytes) -> Archivo:
     #Hay varias formas de procesarlo
     #1. Voy a quitar la metadata
     #Meta es el diccionario con los datos de la metadata y metadata es toda la cadena de bytes para recalcular el tag
@@ -55,10 +60,7 @@ def decrypt(pwd:str, file:bytes):
         )
     except InvalidTag:
         raise InvalidTag("The metadata, archive or password has been modified. Tag mismatch.")
-    return  {
-            "plaintext": plaintext,
-            "metadata": meta
-            }
+    return Archivo(meta, plaintext)
 
 def gen_metadata(meta:dict, salt:bytes, nonce:bytes):
     magic = b"%AAA" #Todos los formatos de archivo lo llevan para indicar el tipo (4-bytes)
@@ -133,9 +135,9 @@ def derive_pwd(pwd:str, salt:bytes=None):
 
 
 if __name__ == "__main__":
-    # salt, key = derive_pwd("1234").values()
-    # print(key)
-    # print(derive_pwd("1234", salt)["key"])
+    salt, key = derive_pwd("1234").values()
+    print(key)
+    print(derive_pwd("1234", salt)["key"])
 
     #Prueba de encriptacion
     name = "archivo1.txt"
@@ -147,7 +149,8 @@ if __name__ == "__main__":
     
     pwd = "banana"
     msj = msj.encode("utf-8")
-    cypher = encrypt(pwd, msj, metadata)
+
+    cypher = encrypt(pwd, Archivo(metadata, msj))
     print(cypher)
     plain = decrypt(pwd, cypher)
     print(plain)
