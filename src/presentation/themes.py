@@ -1,0 +1,30 @@
+#Colores
+AAA_BG = "#f5e7cc"
+AAA_BG2 = "#f7ead4"
+AAA_COL = "#361a17"
+AAA_COL2 ="#432622"
+
+ENC_COL = "#c8e2f4"
+ENC_BG = "#012e45"
+
+DES_COL = "#fcc0c5"
+DES_BG = "#740001"
+
+DROP_BG = "#f8e5c6"
+DROP_HVR = "#090909"
+
+BODY_BG = "#f8e5c6"
+BODY_BUT_COL = "#f8e0b9"
+#Dimensiones
+AAA_WIDTH  = 0.75
+AAA_HEIGHT = 0.6
+HEADER_MRG = 10
+BODY_MRG = 10
+ENC_MRG = 20
+DES_MRG = 20
+#Texto
+AAA_TITLES = 60
+AAA_SUBTITLES = 30
+AAA_TEXT = 20
+AAA_DROP = 40
+AAA_OPTIONS = 30
