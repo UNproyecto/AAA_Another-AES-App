@@ -49,3 +49,6 @@ class AAADropdown(ft.Dropdown):
                 )
             )
         ]
+
+    def set_drop_action(self, action):
+        self.on_text_change = action

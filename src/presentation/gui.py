@@ -1,24 +1,8 @@
-from dataclasses import field
 import flet as ft
 import themes as th
-from header import AAAHeader
-from body import AAABody
-
-@ft.control
-class AAAButton(ft.Button):
-    expand: int = field(default_factory=lambda: 1)
-
-@ft.control
-class EncryptButton(AAAButton):
-    bgcolor: str = th.ENC_BG
-    color: str = th.ENC_COL
-
-
-@ft.control
-class DecryptButton(AAAButton):
-    bgcolor: str = th.DES_BG
-    color: str = th.DES_COL
-
+from components.header import AAAHeader
+from components.body import AAABody
+from components.buttons import *
         
 @ft.control
 class AAAWindow(ft.Container):
@@ -28,8 +12,9 @@ class AAAWindow(ft.Container):
         self.color = th.AAA_COL
         self.expand = True
         self.margin = 5
-        self.header = self._build_header()
         self.body = self._build_body()
+        self.change_state = self.body.change_state
+        self.header = self._build_header()
         self.content = ft.Column(
             alignment= ft.MainAxisAlignment.START,
             horizontal_alignment= ft.CrossAxisAlignment.STRETCH,
@@ -40,11 +25,12 @@ class AAAWindow(ft.Container):
             )
 
     def _build_header(self):
-        return AAAHeader()
+        self.header = AAAHeader()
+        self.header.set_drop_action(self.change_state)
+        return self.header
     
     def _build_body(self):
-        return ft.Row(expand= True,
-                      controls=[AAABody()])
+        return AAABody()
     
         
 
