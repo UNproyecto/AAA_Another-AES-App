@@ -39,7 +39,6 @@ async def main(page: ft.Page):
     page.bgcolor = th.AAA_BG
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     await page.window.center()
-    
     page.add(AAAWindow())
         
 

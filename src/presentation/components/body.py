@@ -2,6 +2,7 @@ from dataclasses import dataclass
 import flet as ft
 import themes as th
 from .buttons import *
+from .dialogs import *
 
 
 @dataclass
@@ -167,13 +168,17 @@ class RightColumnContent(ft.Column):
     def change_state(self):
         self.state = not self.state
         self.title.content.controls[0].value = self.title_options[self.state]
-    
-        
+
 @ft.control
 class AAABody(ft.Card):
     def init(self):
 
         self.picker = ft.FilePicker()
+
+        self.enc_dialog = EncrDialog()
+        self.upl_dialog = CloudUploadDialog()
+        self.down_dialog = CloudDownloadDialog()
+        self.local_dialog = LocalDownloadDialog()
         self.state:bool = True #Encrypt o Decrypt
         self.bgcolor = th.BODY_BG
         self.margin = th.BODY_MRG
@@ -196,35 +201,39 @@ class AAABody(ft.Card):
                                         content=
                                         ft.Text('Cargar y Encriptar', size=th.AAA_TEXT,),
                                         icon=ft.Icons.UPLOAD_FILE,
-                                        on_click=self.seleccionar
+                                        on_click=self.sel_encr
                                         )
         self.enc_encrypt = EncryptButton(
                                         visible = False,
                                         content=
                                         ft.Text('Subir', size=th.AAA_TEXT),
                                         icon=ft.Icons.CLOUD,
-                                        on_click=lambda x: None
+                                        on_click= self.open_up_dialog
                                         )
         self.dec_select = DecryptButton(
                                         visible = True,
                                         content=
                                         ft.Text('Recuperar', size=th.AAA_TEXT,),
                                         icon=ft.Icons.CLOUD,
-                                        on_click=lambda x: None)
+                                        on_click= self.open_down_dialog
+                                        )
         self.dec_dencrypt = DecryptButton(
                                         visible= True,
                                         content=
                                         ft.Text('Descargar y Desencriptar', size=th.AAA_TEXT),
                                         icon=ft.Icons.DOWNLOAD,
-                                        on_click=lambda x: None)
+                                        on_click= self.open_local_dialog
+                                        )
         self.controls = ft.Row(
                             expand=1,
                             margin = th.BODY_MRG,
                             controls=[
+
                                 self.enc_select,
-                                self.enc_encrypt,
                                 self.dec_select,
+                                self.enc_encrypt,
                                 self.dec_dencrypt
+                                
                             ]
                         )
         
@@ -236,7 +245,26 @@ class AAABody(ft.Card):
                 ]
         )
     
-    async def seleccionar(self, e):
+    def open_local_dialog(self):
+        self.local_dialog.reset_dialog()
+        self.page.show_dialog(self.local_dialog)
+
+    def open_down_dialog(self):
+        self.down_dialog.reset_dialog()
+        self.page.show_dialog(self.down_dialog)
+
+    def open_up_dialog(self):
+        self.upl_dialog.reset_dialog()
+        self.page.show_dialog(self.upl_dialog)
+
+    async def sel_encr(self):
+        response = await self.seleccionar()
+        if response:
+            self.enc_dialog.reset_dialog()
+            self.page.show_dialog(self.enc_dialog)
+            self.update()
+
+    async def seleccionar(self):
         raw : list[ft.FilePickerFile] = await self.picker.pick_files(
             allow_multiple= False,
             with_data= True
@@ -246,8 +274,9 @@ class AAABody(ft.Card):
             extension = self.get_extension(raw.name)
             file = FileInfo(name = raw.name, weight = raw.size, path = raw.path, extension=extension, bytes = raw.bytes)
             self.left_col.update_data(file)
+            return True
         else:
-            pass
+            return False
         
     def get_extension(self, name:str):
         start = name.index(".")
