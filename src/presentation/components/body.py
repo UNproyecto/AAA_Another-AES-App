@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import flet as ft
-import themes as th
+from .. import themes as th
 from .buttons import *
 from .dialogs import *
 
@@ -148,21 +148,20 @@ class RightColumnContent(ft.Column):
         )
         self.update()
 
-    def write_binary_data(self, binary_text: str, chunk_size: int = 80):
+    def write_binary_data(self, binary_text: str):
         self.scrollable.controls.clear()
         if not binary_text:
             self.clear_data()
             return
 
-        for i in range(0, len(binary_text), chunk_size):
-            chunk = binary_text[i:i + chunk_size]
-            self.scrollable.controls.append(
-                ft.Text(
-                    value=chunk,
-                    color=th.AAA_COL,
-                    size=th.AAA_TEXT,
-                )
-            )
+    
+        self.scrollable.controls.append(
+            ft.Text(
+                value=str(binary_text),
+                color=th.AAA_COL,
+                size=th.AAA_TEXT,
+            ))
+
         self.update()
 
     def change_state(self):
@@ -172,10 +171,11 @@ class RightColumnContent(ft.Column):
 @ft.control
 class AAABody(ft.Card):
     def init(self):
-
+        
+        self.encr_file = None
+        self.file = None
         self.picker = ft.FilePicker()
-
-        self.enc_dialog = EncrDialog()
+        self.enc_dialog = EncrDialog(parent=self)
         self.upl_dialog = CloudUploadDialog()
         self.down_dialog = CloudDownloadDialog()
         self.local_dialog = LocalDownloadDialog()
@@ -272,8 +272,8 @@ class AAABody(ft.Card):
         if len(raw) > 0:
             raw : ft.FilePickerFile = raw[0]
             extension = self.get_extension(raw.name)
-            file = FileInfo(name = raw.name, weight = raw.size, path = raw.path, extension=extension, bytes = raw.bytes)
-            self.left_col.update_data(file)
+            self.file = FileInfo(name = raw.name, weight = raw.size, path = raw.path, extension=extension, bytes = raw.bytes)
+            self.left_col.update_data(self.file)
             return True
         else:
             return False
@@ -292,3 +292,7 @@ class AAABody(ft.Card):
         self.left_col.clear_data()
         self.right_col.clear_data()
         self.update()
+
+    def set_encrypted(self, file):
+        self.encr_file = file
+        self.right_col.write_binary_data(file)

@@ -1,8 +1,8 @@
 import flet as ft
-import themes as th
-from components.header import AAAHeader
-from components.body import AAABody
-from components.buttons import *
+from . import themes as th
+from .components.header import AAAHeader
+from .components.body import AAABody
+from .components.buttons import *
         
 @ft.control
 class AAAWindow(ft.Container):
@@ -31,8 +31,6 @@ class AAAWindow(ft.Container):
     
     def _build_body(self):
         return AAABody()
-    
-        
 
 async def main(page: ft.Page):
     page.title = "AAA"
@@ -40,8 +38,6 @@ async def main(page: ft.Page):
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     await page.window.center()
     page.add(AAAWindow())
-        
 
-
-
-ft.run(main)
+def AAAStart():
+    ft.run(main)

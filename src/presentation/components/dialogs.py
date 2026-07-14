@@ -1,7 +1,9 @@
 from dataclasses import field
 import flet as ft
-import themes as th
+from .. import themes as th
 from .dropdown import UploadDrop
+from domain import models as md
+from domain import AAA
 
 @ft.control
 class MainDialog (ft.AlertDialog):
@@ -32,6 +34,12 @@ class PwdContent(ft.Column):
     def rem_path(self):
         self.path.visible = False
 
+    def get_pwd(self):
+        return self.pwd.value
+    
+    def get_path(self):
+        return self.path.value
+
     def reset_content(self):
         self.pwd.value = ''
         self.path.value = ''
@@ -49,6 +57,9 @@ class PwdContent(ft.Column):
 
 @ft.control
 class EncrDialog(MainDialog):
+    def __init__(self, parent):
+        super().__init__()
+        self.parent_component = parent
     def init(self):
         self.title.color = th.ENC_COL
         self.bgcolor = th.ENC_BG
@@ -58,11 +69,35 @@ class EncrDialog(MainDialog):
             bgcolor = th.ENC_DIAL_BG,
             content = self.cont
         )
-        self.button = ft.TextButton("Encriptar")
+        self.button = ft.TextButton(content = "Encriptar", on_click=self.encrypt)
         self.actions = [self.button] 
     
     def reset_dialog(self):
         self.cont.reset_content()
+    
+    def get_pwd(self):
+        return self.cont.get_pwd()
+
+    def encrypt(self):
+        file = self.parent_component.file
+        if file is not None:
+            metadata = {
+                'name' : file.name,
+                'weight' : file.weight,
+                'path' : file.path,
+                'extension' : file.extension
+            }
+            file = file.bytes
+            file = md.Archivo(metadata= metadata, contenido = file)
+            encr_file = AAA.encrypt(pwd= self.get_pwd(),
+                        archivo= file)
+
+            self.parent_component.set_encrypted(encr_file)
+            self.page.pop_dialog()
+        
+
+
+    
 
 @ft.control
 class ConnectionCard(ft.Card):

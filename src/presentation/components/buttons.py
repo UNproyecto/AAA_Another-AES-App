@@ -1,6 +1,6 @@
 from dataclasses import field
 import flet as ft
-import themes as th
+from .. import themes as th
 @ft.control
 class AAAButton(ft.Button):
     expand: int = field(default_factory=lambda: 1)
