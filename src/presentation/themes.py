@@ -22,8 +22,8 @@ BODY_BUT_COL = "#f8e0b9"
 ERROR_COL = "#740001"
 ERROR_BG = "#ffd4d8"
 
-INFO_BG = "#2B7400"
-INFO_COL = "#d9ffd4"
+INFO_COL = "#2B7400"
+INFO_BG = "#d9ffd4"
 
 #Dimensiones
 AAA_WIDTH  = 0.75

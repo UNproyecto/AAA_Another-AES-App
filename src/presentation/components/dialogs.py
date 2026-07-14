@@ -460,10 +460,7 @@ class LocalDownloadDialog(MainDialog):
         try: 
             if path != "":
                 file = AAA.decrypt(pwd, data)
-                print(file) #TODO: imprimir esto en la right column del body
-                """
-                Ejemplo de como viene file: Archivo(metadata={'name': 'secreto.txt', 'weight': 42, 'path': 'C:\\Users\\NICOLAS\\Desktop\\secreto.txt', 'extension': '.txt'}, contenido=b'LA PISTOLA DE SILICONA SE QUED\xc3\x93 CONECTADA')
-                """
+                self.parent_cmp.set_encrypted(file.contenido, column="right", update_file=False)
                 name = file.metadata["name"]
 
                 with open(path+"\\" +name, 'wb') as archivo:

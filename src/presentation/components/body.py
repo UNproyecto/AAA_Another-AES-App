@@ -318,8 +318,8 @@ class AAABody(ft.Card):
         self.right_col.clear_data()
         self.update()
 
-    def set_encrypted(self, file, column="right"):
-        self.encr_file = file
+    def set_encrypted(self, file, column="right", update_file = True):
+        self.encr_file = file if update_file else self.enc_encrypt
         if column == "right":
             self.right_col.write_binary_data(file)
         elif column == "left":
