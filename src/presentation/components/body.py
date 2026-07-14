@@ -76,29 +76,46 @@ class LeftColumnContent(ft.Column):
         
         self.scrollable.controls.clear()
 
-        for label, value in fields_to_render:
-            self.scrollable.controls.append(
-                ft.Text(
-                    spans=[
-                        ft.TextSpan(
-                            text=f"{label} ",
-                            style=ft.TextStyle(
-                                weight=ft.FontWeight.BOLD,
-                                color=th.AAA_COL,
-                                size=th.AAA_TEXT
+        if self.state:
+            for label, value in fields_to_render:
+                self.scrollable.controls.append(
+                    ft.Text(
+                        spans=[
+                            ft.TextSpan(
+                                text=f"{label} ",
+                                style=ft.TextStyle(
+                                    weight=ft.FontWeight.BOLD,
+                                    color=th.AAA_COL,
+                                    size=th.AAA_TEXT
+                                )
+                            ),
+                            ft.TextSpan(
+                                text=str(value),
+                                style=ft.TextStyle(
+                                    weight=ft.FontWeight.NORMAL,
+                                    color=th.AAA_COL,
+                                    size=th.AAA_TEXT
+                                )
                             )
-                        ),
-                        ft.TextSpan(
-                            text=str(value),
-                            style=ft.TextStyle(
-                                weight=ft.FontWeight.NORMAL,
-                                color=th.AAA_COL,
-                                size=th.AAA_TEXT
-                            )
-                        )
-                    ]
+                        ]
+                    )
                 )
-            )
+
+    def write_binary_data(self, binary_text: str):
+        self.scrollable.controls.clear()
+        if not binary_text:
+            self.clear_data()
+            return
+
+    
+        self.scrollable.controls.append(
+            ft.Text(
+                value=str(binary_text),
+                color=th.AAA_COL,
+                size=th.AAA_TEXT,
+            ))
+
+        self.update()
 
 @ft.control
 class RightColumnContent(ft.Column):
@@ -176,9 +193,11 @@ class AAABody(ft.Card):
         self.file = None
         self.picker = ft.FilePicker()
         self.enc_dialog = EncrDialog(parent=self)
-        self.upl_dialog = CloudUploadDialog()
-        self.down_dialog = CloudDownloadDialog()
-        self.local_dialog = LocalDownloadDialog()
+        self.upl_dialog = CloudUploadDialog(parent=self)
+        self.down_dialog = CloudDownloadDialog(parent=self)
+        self.local_dialog = LocalDownloadDialog(parent=self)
+        self.error_dialog = ConnectionErrorDialog()
+        self.info_dialog = ConnectionInfoDialog()
         self.state:bool = True #Encrypt o Decrypt
         self.bgcolor = th.BODY_BG
         self.margin = th.BODY_MRG
@@ -263,6 +282,12 @@ class AAABody(ft.Card):
             self.enc_dialog.reset_dialog()
             self.page.show_dialog(self.enc_dialog)
             self.update()
+        
+    
+    def seleccionar_path(self):
+        return self.picker.get_directory_path()
+        
+    
 
     async def seleccionar(self):
         raw : list[ft.FilePickerFile] = await self.picker.pick_files(
@@ -293,6 +318,9 @@ class AAABody(ft.Card):
         self.right_col.clear_data()
         self.update()
 
-    def set_encrypted(self, file):
+    def set_encrypted(self, file, column="right"):
         self.encr_file = file
-        self.right_col.write_binary_data(file)
+        if column == "right":
+            self.right_col.write_binary_data(file)
+        elif column == "left":
+            self.left_col.write_binary_data(file)

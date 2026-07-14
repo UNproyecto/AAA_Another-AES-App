@@ -95,16 +95,16 @@ class UploadDrop(ft.Dropdown):
                     alignment=ft.MainAxisAlignment.START,
                 )
             ),
-            ft.DropdownOption(
-                key="Google Drive",
-                content=ft.Row(
-                    controls=[
-                        ft.Icon(icon=ft.Icons.LOCK_OPEN_SHARP, color=self.opt_color),
-                        ft.Text(value="Google Drive", color=self.opt_color, weight=ft.FontWeight.BOLD, size=th.DROP_TEXT)
-                    ],
-                    alignment=ft.MainAxisAlignment.START,
-                )
-            )
+            # ft.DropdownOption(
+            #     key="Google Drive",
+            #     content=ft.Row(
+            #         controls=[
+            #             ft.Icon(icon=ft.Icons.LOCK_OPEN_SHARP, color=self.opt_color),
+            #             ft.Text(value="Google Drive", color=self.opt_color, weight=ft.FontWeight.BOLD, size=th.DROP_TEXT)
+            #         ],
+            #         alignment=ft.MainAxisAlignment.START,
+            #     )
+            # )
         ]
 
     def set_drop_action(self, action):

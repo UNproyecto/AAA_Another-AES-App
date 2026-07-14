@@ -17,6 +17,14 @@ DROP_HVR = "#090909"
 
 BODY_BG = "#f8e5c6"
 BODY_BUT_COL = "#f8e0b9"
+
+# Paleta para dialog
+ERROR_COL = "#740001"
+ERROR_BG = "#ffd4d8"
+
+INFO_BG = "#2B7400"
+INFO_COL = "#d9ffd4"
+
 #Dimensiones
 AAA_WIDTH  = 0.75
 AAA_HEIGHT = 0.6

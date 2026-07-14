@@ -9,7 +9,6 @@ from io import BytesIO
 load_dotenv()
 
 from .storage_provider import StorageProvider
-from domain.models import Archivo
 
 class AdaptadorSFTP(StorageProvider):
     
@@ -34,24 +33,20 @@ class AdaptadorSFTP(StorageProvider):
             self._ssh.close()
             self._conexion = None
     
-    def cargar(self, file: Archivo, remote_name: str):
+    def cargar(self, data: bytes, remote_name: str):
         if self._conexion is None:
             raise Exception("No hay una conexión activa")
-
-        ## Subir archivo encriptado
-        with BytesIO(file.contenido) as archivo:
+        with BytesIO(data) as archivo:
             self._conexion.putfo(archivo, remote_name)
 
         
-    def descargar(self, remote_name: str) -> Archivo:
+    def descargar(self, remote_name: str) -> bytes:
         if self._conexion is None:
             raise Exception("No hay una conexión activa")
         
-        ## Recuperar archivo
         with self._conexion.open(remote_name, 'r') as archivo:
             archivo_bin = archivo.read()
-
-        return Archivo({}, archivo_bin)
+        return archivo_bin
 
 if __name__ == "__main__":
     ip_add = os.getenv("IP_SFTP")
@@ -60,7 +55,7 @@ if __name__ == "__main__":
 
     server = AdaptadorSFTP(ip_add)
     server.conectar(user, pwd)
-    archivito = Archivo({}, b'Hola, este es un archivo de prueba!')
+    archivito = b'Hola, este es un archivo de prueba!'
     server.cargar(archivito, "holi.txt")
     recuperado = server.descargar("prueba.txt")
     server.desconectar()
